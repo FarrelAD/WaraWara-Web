@@ -1,4 +1,4 @@
-# Web Push Notification Demo (Monorepo: Node.js, Bun, Python FastAPI & Golang)
+# Web Push Notification Demo
 
 A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and backend implementations across **Node.js**, **Bun**, **Python (FastAPI)**, and **Golang**.
 
