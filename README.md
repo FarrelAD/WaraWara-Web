@@ -1,6 +1,6 @@
-# Web Push Notification Demo (Monorepo: Node.js, Bun & Python FastAPI)
+# Web Push Notification Demo (Monorepo: Node.js, Bun, Python FastAPI & Golang)
 
-A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and backend implementations across **Node.js**, **Bun**, and **Python (FastAPI)**.
+A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and backend implementations across **Node.js**, **Bun**, **Python (FastAPI)**, and **Golang**.
 
 This project explores how web applications can deliver real-time push notifications **directly from your own backend server** using the standard W3C Web Push Protocol without relying on third-party push notification SDKs (like Firebase Cloud Messaging SDK or OneSignal) on the client.
 
@@ -9,8 +9,8 @@ This project explores how web applications can deliver real-time push notificati
 ## 📌 Key Objectives & Key Takeaways
 
 - **No Third-Party Client SDKs**: Understand how Web Push operates natively using browser standards (`PushManager`, `ServiceWorker`) and standard VAPID key pairs.
-- **Multi-Runtime & Polyglot Backend Support**: Compare identical Web Push architectures across **Node.js** (Express), **Bun** (Express), and **Python** (FastAPI + Asyncio).
-- **Monorepo Architecture**: Clean workspace dividing applications into `node-web-push`, `bun-web-push`, and `fastapi-web-push`.
+- **Multi-Runtime & Polyglot Backend Support**: Compare identical Web Push architectures across **Node.js** (Express), **Bun** (Express), **Python** (FastAPI + Asyncio), and **Golang** (`net/http` + goroutines).
+- **Monorepo Architecture**: Clean workspace dividing applications into `node-web-push`, `bun-web-push`, `fastapi-web-push`, and `golang-web-push`.
 - **Interactive UI & Dashboard**: Clean 2-column layout to manage browser permissions, generate push subscriptions, and trigger instant or scheduled push notifications.
 
 ---
@@ -22,6 +22,7 @@ Looking to implement Web Push in your own project? Follow the complete, step-by-
 - 🟢 **[Node.js Integration Guide](apps/node-web-push/README.md)**: Dependencies, VAPID key management, Express setup, service worker lifecycle, and production database persistence.
 - ⚡ **[Bun (TypeScript) Integration Guide](apps/bun-web-push/README.md)**: Native TypeScript setup, zero-dependency `.env` loading, async push dispatch, automated testing with `bun:test`, and deployment recommendations.
 - 🐍 **[Python (FastAPI) Integration Guide](apps/fastapi-web-push/README.md)**: Modern asynchronous FastAPI setup, Pydantic type validation, background scheduled tasks, pywebpush integration, and automated testing with `pytest`.
+- 🐹 **[Golang Integration Guide](apps/golang-web-push/README.md)**: Idiomatic Go setup using standard `net/http` routing, `webpush-go` encryption, concurrent goroutine dispatching, and thread-safe subscription management.
 
 ---
 
@@ -118,7 +119,26 @@ WaraWara-Web/
 │       ├── tests/
 │       │   └── test_push_routes.py          # Pytest endpoint test suite
 │       └── pyproject.toml         # PEP 621 package config, Ruff & Mypy settings
-└── README.md
+│
+└── apps/
+    └── golang-web-push/           # Golang implementation
+        ├── public/                # Static assets (HTML, CSS, JS, Service Worker)
+        ├── config/
+        │   └── config.go          # Env & VAPID configuration
+        ├── models/
+        │   └── models.go          # Strongly typed push payloads & structs
+        ├── services/
+        │   ├── subscription_service.go # Thread-safe subscription registry
+        │   └── push_service.go         # webpush-go client & concurrent dispatch
+        ├── handlers/
+        │   └── handlers.go        # HTTP API endpoints
+        ├── tests/
+        │   ├── handlers_test.go   # Integration tests
+        │   └── subscription_test.go # Unit tests
+        ├── Makefile               # Task automation (run, test, vet, fmt, check)
+        ├── go.mod                 # Go module definition (go 1.26.4)
+        ├── go.sum                 # Dependency checksums
+        └── main.go                # HTTP listener & static file server (port 8080)
 ```
 
 ---
@@ -133,6 +153,7 @@ WaraWara-Web/
 | **Bun** | `v1.4.2` | `.bun-version`, `.tool-versions` | `"bun": ">=1.4.0 <2.0.0"` |
 | **pnpm** | `v10.25.0` | `package.json` (`packageManager`), `.tool-versions` | `"pnpm": ">=10.0.0"` |
 | **Python** | `v3.13.5` | `.python-version`, `.tool-versions` | `requires-python = ">=3.10"` |
+| **Golang** | `v1.26.4` | `.go-version`, `.tool-versions` | `go.mod (>= 1.22)` |
 
 ### Prerequisites
 
@@ -140,6 +161,7 @@ WaraWara-Web/
 - [Bun](https://bun.sh/) (`v1.4.2` recommended, or `^1.4.x`)
 - [pnpm](https://pnpm.io/) (`v10.25.0`)
 - [Python](https://www.python.org/) (`v3.13.5` recommended, or `>=3.10`)
+- [Golang](https://go.dev/) (`v1.26.4` recommended, or `>=1.22`)
 
 ### Installation & Setup
 
@@ -194,6 +216,18 @@ uvicorn src.main:app --reload --port 8000
 ```
 Open your browser at: `http://localhost:8000`
 
+### Option 4: Run Golang Server (Port 8080)
+```bash
+cd apps/golang-web-push
+
+# Run with standard Go:
+go run main.go
+
+# Or using Make:
+make run
+```
+Open your browser at: `http://localhost:8080`
+
 ---
 
 ## ⚡ How to Test the Demo
@@ -236,8 +270,18 @@ The Python implementation leverages **[Ruff](https://astral.sh/ruff)** for blazi
 | `mypy src tests` | Run strict static type checking across routes and schemas |
 | `pytest -v` | Run automated FastAPI endpoint test suite |
 
+### Golang Workspace (`apps/golang-web-push`)
+The Golang implementation utilizes standard Go toolchain commands and task automation via `Makefile`:
+
+| Command (in `apps/golang-web-push`) | Purpose |
+| :--- | :--- |
+| `go test -v ./...` (or `make test`) | Run full automated unit and integration test suite |
+| `go vet ./...` (or `make vet`) | Run static analysis to detect concurrency bugs and subtle flaws |
+| `go fmt ./...` (or `make fmt`) | Automatically format all Go source files according to Go conventions |
+| `make check` | Run formatting, static analysis, and tests in one pass |
+
 ---
 
 ## Conclusion
 
-This setup demonstrates that Web Push Notifications follow identical W3C Push protocol standards regardless of your backend runtime or programming language. Whether running on **Node.js** (Express), **Bun** (Express), or **Python** (FastAPI + Asyncio), the native browser Service Worker interacts with the exact same VAPID key exchange, subscription model, and encrypted push payload contract.
+This setup demonstrates that Web Push Notifications follow identical W3C Push protocol standards regardless of your backend runtime or programming language. Whether running on **Node.js** (Express), **Bun** (Express), **Python** (FastAPI + Asyncio), or **Golang** (`net/http` + goroutines), the native browser Service Worker interacts with the exact same VAPID key exchange, subscription model, and encrypted push payload contract.
