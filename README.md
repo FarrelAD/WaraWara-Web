@@ -92,13 +92,22 @@ WaraWara-Web/
 - [Bun](https://bun.sh/) (`v1.4.2` recommended, or `^1.4.x`)
 - [pnpm](https://pnpm.io/) (`v10.25.0`)
 
-### Installation
+### Installation & Setup
 
-Install all workspace dependencies from the root directory:
+1. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
 
-```bash
-pnpm install
-```
+2. **Generate your own secure VAPID Keypair**:
+   ```bash
+   pnpm generate-vapid
+   ```
+   > [!IMPORTANT]
+   > This command creates a `.env` file containing freshly generated cryptographic keys:
+   > - `VAPID_PUBLIC_KEY`: Safe to expose to browsers to authenticate subscriptions.
+   > - `VAPID_PRIVATE_KEY`: Kept confidential on the server to sign push requests. Never commit `.env` to git!
+   > - `VAPID_SUBJECT`: Contact URI (e.g. `mailto:admin@example.com`) required by vendor push relays.
 
 ---
 

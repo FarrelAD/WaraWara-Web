@@ -33,7 +33,7 @@ export interface SendPushRequestBody {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.BUN_PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -41,13 +41,36 @@ app.use(express.json());
 // Serve static frontend files from 'public' directory
 app.use(express.static(path.join(import.meta.dir, 'public')));
 
-const vapidKeys: VapidKeys = {
-  publicKey: process.env.VAPID_PUBLIC_KEY || 'BLnabU8wJCqIu0TQf5kGzCcg5_4Yjvw0E5ixaZAs03PcYaeznHgllaIdP7fZNkN93HNY0UUAKneoMM3uRCQP2gM',
-  privateKey: process.env.VAPID_PRIVATE_KEY || 'DT0PPdym6bUHsvcR8hIXieVL0CQL0hDQNPgC3eFdnsg'
-};
+/**
+ * Resolve VAPID keys securely from environment variables.
+ * In production, missing keys will terminate execution immediately.
+ * In development, an ephemeral keypair is generated if not configured in .env.
+ */
+function resolveVapidKeys(): VapidKeys {
+  const publicKey = process.env.VAPID_PUBLIC_KEY;
+  const privateKey = process.env.VAPID_PRIVATE_KEY;
+
+  if (publicKey && privateKey) {
+    return { publicKey, privateKey };
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    console.error('[SECURITY ERROR] VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY must be set in production!');
+    console.error('Run "pnpm generate-vapid" or configure your deployment environment variables.');
+    process.exit(1);
+  }
+
+  console.warn('\n⚠️  [SECURITY WARNING] No VAPID keys configured in environment variables.');
+  console.warn('⚠️  Generating temporary ephemeral VAPID keys for local development only.');
+  console.warn('⚠️  Run "pnpm generate-vapid" to persist a permanent keypair into your .env file.\n');
+  return webPush.generateVAPIDKeys();
+}
+
+const vapidKeys: VapidKeys = resolveVapidKeys();
+const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:dev@warawara.demo';
 
 webPush.setVapidDetails(
-  'mailto:dev@warawara.demo',
+  vapidSubject,
   vapidKeys.publicKey,
   vapidKeys.privateKey
 );

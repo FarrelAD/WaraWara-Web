@@ -11,6 +11,7 @@
   "scripts": {
     "start:node": "pnpm --filter @warawara/node-web-push start",
     "start:bun": "pnpm --filter @warawara/bun-web-push start",
-    "dev:bun": "pnpm --filter @warawara/bun-web-push dev"
+    "dev:bun": "pnpm --filter @warawara/bun-web-push dev",
+    "generate-vapid": "node --env-file-if-exists=.env scripts/generate-vapid.js"
   }
 }

@@ -7,8 +7,8 @@
     "bun": ">=1.4.0 <2.0.0"
   },
   "scripts": {
-    "start": "bun run server.ts",
-    "dev": "bun --watch server.ts"
+    "start": "bun --env-file=../../.env run server.ts",
+    "dev": "bun --env-file=../../.env --watch server.ts"
   },
   "dependencies": {
     "body-parser": "^2.3.0",
