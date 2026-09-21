@@ -1,13 +1,16 @@
 {
-  "name": "warawara-web",
+  "name": "warawara-web-monorepo",
+  "version": "1.0.0",
+  "private": true,
   "packageManager": "pnpm@10.25.0",
-  "scripts": {
-    "start": "node server.js"
+  "engines": {
+    "node": ">=24.0.0 <25.0.0",
+    "bun": ">=1.4.0 <2.0.0",
+    "pnpm": ">=10.0.0"
   },
-  "dependencies": {
-    "body-parser": "^2.3.0",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "web-push": "^3.6.7"
+  "scripts": {
+    "start:node": "pnpm --filter @warawara/node-web-push start",
+    "start:bun": "pnpm --filter @warawara/bun-web-push start",
+    "dev:bun": "pnpm --filter @warawara/bun-web-push dev"
   }
 }

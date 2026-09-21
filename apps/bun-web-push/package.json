@@ -1,0 +1,26 @@
+{
+  "name": "@warawara/bun-web-push",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web Push Notification Demo on Bun runtime with Express",
+  "engines": {
+    "bun": ">=1.4.0 <2.0.0"
+  },
+  "scripts": {
+    "start": "bun run server.ts",
+    "dev": "bun --watch server.ts"
+  },
+  "dependencies": {
+    "body-parser": "^2.3.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.1.0",
+    "@types/web-push": "^3.6.4",
+    "bun-types": "latest"
+  }
+}

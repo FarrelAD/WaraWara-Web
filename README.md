@@ -1,15 +1,16 @@
-# Web Push Notification Demo
+# Web Push Notification Demo (Monorepo: Node.js & Bun)
 
-A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and a Node.js Express backend. 
+A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and backend implementations for both **Node.js** and **Bun** runtimes with Express.
 
-This project explores how web applications can deliver real-time push notifications **directly from your own backend server** using the standard W3C Web Push Protocol without relying on third-party push notification services like Firebase Cloud Messaging (FCM) or Apple Push Notification service (APNs).
+This project explores how web applications can deliver real-time push notifications **directly from your own backend server** using the standard W3C Web Push Protocol without relying on third-party push notification SDKs (like Firebase Cloud Messaging SDK or OneSignal) on the client.
 
 ---
 
 ## 📌 Key Objectives & Key Takeaways
 
-- **No Third-Party Services Needed**: Understand how Web Push operates natively using browser standards (`PushManager`, `ServiceWorker`) and standard VAPID key pairs.
-- **Self-Hosted Infrastructure**: Control push notifications fully on your Node.js backend.
+- **No Third-Party Client SDKs**: Understand how Web Push operates natively using browser standards (`PushManager`, `ServiceWorker`) and standard VAPID key pairs.
+- **Multi-Runtime Backend Support**: Compare identical Express.js Web Push architectures across **Node.js** and **Bun**.
+- **Monorepo Architecture**: Clean workspace managed with `pnpm workspaces` dividing apps into `node-web-push` and `bun-web-push`.
 - **Interactive UI & Dashboard**: Clean 2-column layout to manage browser permissions, generate push subscriptions, and trigger instant or scheduled push notifications.
 
 ---
@@ -19,7 +20,7 @@ This project explores how web applications can deliver real-time push notificati
 Web Push Notifications rely on three core pillars:
 1. **Client Browser & Service Worker**: Requests user permission and registers a background worker script (`sw.js`).
 2. **Push Service Endpoint**: Browser vendor-provided endpoint (e.g., Mozilla Push Service, Google FCM Push endpoint) created when the user subscribes via `pushManager.subscribe()`.
-3. **Application Backend (Node.js)**: Encrypts payloads with **VAPID Keys** and sends HTTPS POST requests directly to the subscription endpoint.
+3. **Application Backend (Node.js or Bun)**: Encrypts payloads with **VAPID Keys** and sends HTTPS POST requests directly to the subscription endpoint using `web-push`.
 
 ### Architecture Flow Diagram
 
@@ -29,7 +30,7 @@ sequenceDiagram
     actor User
     participant Browser as Browser Client
     participant SW as Service Worker (sw.js)
-    participant Server as Node.js Backend
+    participant Server as Node.js / Bun Backend
     participant PushService as Vendor Push Service
 
     Note over Server: 1. Generate VAPID Keys
@@ -53,70 +54,85 @@ sequenceDiagram
 
 ---
 
-## 📁 Project Structure
+## 📁 Monorepo Structure
 
 ```
 WaraWara-Web/
-├── public/
-│   ├── index.html   # Main UI dashboard
-│   ├── style.css    # Theme styles
-│   ├── app.js       # Client-side logic & PushManager integration
-│   └── sw.js        # Service worker handling push & notificationclick events
-├── server.js        # Node.js Express server using 'web-push' library (JSDoc annotated)
-├── package.json     # Node.js dependencies & scripts
-└── README.md        # Documentation
+├── pnpm-workspace.yaml            # Monorepo workspace configuration
+├── package.json                   # Root orchestrator scripts
+├── apps/
+│   ├── node-web-push/             # Node.js implementation
+│   │   ├── public/                # Static assets (HTML, CSS, JS, Service Worker)
+│   │   ├── server.js              # Node.js Express server (port 3000)
+│   │   └── package.json           # Node package config
+│   │
+│   └── bun-web-push/              # Bun implementation
+│       ├── public/                # Static assets (HTML, CSS, JS, Service Worker)
+│       ├── server.ts              # Bun Express TypeScript server (port 3001)
+│       ├── tsconfig.json          # Bun TypeScript config
+│       └── package.json           # Bun package config
+└── README.md
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-Follow these steps to run the demo application locally on your machine.
+### Pinned Experimental Runtime Specifications
+
+| Runtime / Tool | Pinned Version | Version File | Config / Engine Constraint |
+| :--- | :--- | :--- | :--- |
+| **Node.js** | `v24.15.0` | `.nvmrc`, `.node-version`, `.tool-versions` | `"node": ">=24.0.0 <25.0.0"` |
+| **Bun** | `v1.4.2` | `.bun-version`, `.tool-versions` | `"bun": ">=1.4.0 <2.0.0"` |
+| **pnpm** | `v10.25.0` | `package.json` (`packageManager`), `.tool-versions` | `"pnpm": ">=10.0.0"` |
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v16 or higher)
-- [pnpm](https://pnpm.io/) package manager
+- [Node.js](https://nodejs.org/) (`v24.15.0` recommended, or `^24.x`)
+- [Bun](https://bun.sh/) (`v1.4.2` recommended, or `^1.4.x`)
+- [pnpm](https://pnpm.io/) (`v10.25.0`)
 
-### Installation & Setup
+### Installation
 
-1. **Clone or navigate to project directory**:
-   ```bash
-   git clone https://github.com/FarrelAD/WaraWara-Web.git
-   cd WaraWara-Web
-   ```
+Install all workspace dependencies from the root directory:
 
-2. **Install dependencies using pnpm**:
-   ```bash
-   pnpm install
-   ```
+```bash
+pnpm install
+```
 
-3. **Start the Express backend server**:
-   ```bash
-   pnpm start
-   ```
+---
 
-4. **Access the application**:
-   Open your browser and navigate to `http://localhost:3000`.
+## 🏃 Running the Servers
+
+You can run either backend or both simultaneously on different ports:
+
+### Option 1: Run Node.js Server (Port 3000)
+```bash
+pnpm start:node
+```
+Open your browser at: `http://localhost:3000`
+
+### Option 2: Run Bun Server (Port 3001)
+```bash
+pnpm start:bun
+```
+Open your browser at: `http://localhost:3001`
+
+*(For Bun development with auto-reload: `pnpm dev:bun`)*
 
 ---
 
 ## ⚡ How to Test the Demo
 
-1. **Request Permission**: Click the **Request Permission** button and click **Allow** in your browser's native prompt.
-2. **Subscribe**: Click **Subscribe to Web Push**. This retrieves the VAPID public key from the server and registers a `PushSubscription` with the backend.
+1. **Request Permission**: Click **Request Permission** and select **Allow** in your browser's prompt.
+2. **Subscribe**: Click **Subscribe to Web Push**. This retrieves the VAPID public key from the backend and registers a `PushSubscription`.
 3. **Dispatch Notification**:
    - Enter a custom title and message body.
-   - Click **Send Push via Node.js Server**.
-4. **Test Scheduled Push**: Set a delay (e.g., `5` seconds), click send, and close or switch browser tabs to observe the background Service Worker handling the incoming push!
+   - Click **Send Push Notification**.
+4. **Test Scheduled Push**: Set a delay (e.g., `5` seconds), click send, and minimize/switch browser tabs to observe the background Service Worker receiving the push notification even when the tab isn't active!
 
 ---
 
 ## 💡 Conclusion
 
-This demo proves that **third-party push services (FCM/APNs) are not strictly mandatory for standard Web Applications**. By utilizing:
-- Native **Service Worker API**
-- **W3C Push API** (`PushManager`)
-- Standard **VAPID Authentication** via `web-push` in Node.js
-
-You can build, maintain, and fully own a self-hosted Push Notification system for web platforms!
+This setup demonstrates that Web Push Notifications follow identical W3C Push protocol standards regardless of whether your server runs on **Node.js** or **Bun**. By using Express on Bun, you achieve seamless compatibility with standard Node libraries like `web-push` while leveraging Bun's fast startup and native TypeScript execution.
