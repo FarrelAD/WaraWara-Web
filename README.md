@@ -175,7 +175,10 @@ This monorepo utilizes **[Biome](https://biomejs.dev/)** for ultra-fast linting 
 | `pnpm format` | Format all JS/TS/JSON/CSS files with Biome |
 | `pnpm format:check` | Verify formatting consistency without modifying files |
 | `pnpm typecheck` | Run parallel TypeScript type checking (`tsc --noEmit`) on all packages |
-| `pnpm check` | Run all checks (linting, formatting, and typecheck) in a single pass |
+| `pnpm test` | Run automated test suites across all workspaces in parallel |
+| `pnpm test:node` | Run Node.js native test suite (`node --test`) |
+| `pnpm test:bun` | Run Bun native test suite (`bun test`) |
+| `pnpm check` | Run all checks (linting, formatting, typecheck, and tests) in a single pass |
 
 ---
 

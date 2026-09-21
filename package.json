@@ -18,7 +18,10 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "typecheck": "pnpm -r --parallel run typecheck",
-    "check": "biome check --write . && pnpm typecheck"
+    "test": "pnpm -r --parallel run test",
+    "test:node": "pnpm --filter @warawara/node-web-push test",
+    "test:bun": "pnpm --filter @warawara/bun-web-push test",
+    "check": "biome check --write . && pnpm typecheck && pnpm test"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
