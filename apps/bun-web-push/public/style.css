@@ -4,10 +4,10 @@
   --border-color: #e2e8f0;
   --text-main: #0f172a;
   --text-muted: #64748b;
-  
+
   --primary-color: #2563eb;
   --primary-hover: #1d4ed8;
-  
+
   --badge-granted-bg: #dcfce7;
   --badge-granted-text: #15803d;
   --badge-granted-border: #bbf7d0;
@@ -133,9 +133,21 @@ header p {
   font-weight: 600;
 }
 
-.badge-granted { background: var(--badge-granted-bg); color: var(--badge-granted-text); border: 1px solid var(--badge-granted-border); }
-.badge-denied { background: var(--badge-denied-bg); color: var(--badge-denied-text); border: 1px solid var(--badge-denied-border); }
-.badge-default { background: var(--badge-default-bg); color: var(--badge-default-text); border: 1px solid var(--badge-default-border); }
+.badge-granted {
+  background: var(--badge-granted-bg);
+  color: var(--badge-granted-text);
+  border: 1px solid var(--badge-granted-border);
+}
+.badge-denied {
+  background: var(--badge-denied-bg);
+  color: var(--badge-denied-text);
+  border: 1px solid var(--badge-denied-border);
+}
+.badge-default {
+  background: var(--badge-default-bg);
+  color: var(--badge-default-text);
+  border: 1px solid var(--badge-default-border);
+}
 
 .button-group {
   display: flex;

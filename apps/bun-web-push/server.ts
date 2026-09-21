@@ -1,7 +1,7 @@
-import express, { type Request, type Response } from 'express';
+import path from 'node:path';
 import cors from 'cors';
+import express, { type Request, type Response } from 'express';
 import webPush, { type PushSubscription } from 'web-push';
-import path from 'path';
 
 export interface VapidKeys {
   publicKey: string;
@@ -55,27 +55,27 @@ function resolveVapidKeys(): VapidKeys {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    console.error('[SECURITY ERROR] VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY must be set in production!');
+    console.error(
+      '[SECURITY ERROR] VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY must be set in production!'
+    );
     console.error('Run "pnpm generate-vapid" or configure your deployment environment variables.');
     process.exit(1);
   }
 
   console.warn('\n⚠️  [SECURITY WARNING] No VAPID keys configured in environment variables.');
   console.warn('⚠️  Generating temporary ephemeral VAPID keys for local development only.');
-  console.warn('⚠️  Run "pnpm generate-vapid" to persist a permanent keypair into your .env file.\n');
+  console.warn(
+    '⚠️  Run "pnpm generate-vapid" to persist a permanent keypair into your .env file.\n'
+  );
   return webPush.generateVAPIDKeys();
 }
 
 const vapidKeys: VapidKeys = resolveVapidKeys();
 const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:dev@warawara.demo';
 
-webPush.setVapidDetails(
-  vapidSubject,
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
+webPush.setVapidDetails(vapidSubject, vapidKeys.publicKey, vapidKeys.privateKey);
 
-/** 
+/**
  * Map storing active client push subscriptions keyed by unique subscription ID.
  */
 const subscriptions = new Map<string, PushSubscription>();
@@ -88,20 +88,22 @@ app.get('/api/vapid-public-key', (_req: Request, res: Response) => {
 // Endpoint to save subscription from client browser
 app.post('/api/subscribe', (req: Request, res: Response) => {
   const subscription: PushSubscription = req.body;
-  
+
   if (!subscription || !subscription.endpoint) {
     return res.status(400).json({ error: 'Invalid subscription object' });
   }
 
   const id = Date.now().toString();
   subscriptions.set(id, subscription);
-  
-  console.log(`[Bun Server] New subscription registered. Total subscriptions: ${subscriptions.size}`);
-  
+
+  console.log(
+    `[Bun Server] New subscription registered. Total subscriptions: ${subscriptions.size}`
+  );
+
   res.status(201).json({
     message: 'Subscription stored successfully on Bun server',
     id: id,
-    totalSubscriptions: subscriptions.size
+    totalSubscriptions: subscriptions.size,
   });
 });
 
@@ -117,8 +119,8 @@ app.post('/api/send-notification', async (req: Request, res: Response) => {
     tag: tag || 'demo-push',
     actions: actions || [
       { action: 'open', title: 'Open App' },
-      { action: 'close', title: 'Dismiss' }
-    ]
+      { action: 'close', title: 'Dismiss' },
+    ],
   };
 
   const payload = JSON.stringify(payloadData);
@@ -135,24 +137,27 @@ app.post('/api/send-notification', async (req: Request, res: Response) => {
       try {
         await webPush.sendNotification(sub, payload);
         successCount++;
-      } catch (err: any) {
-        console.error(`[Bun Server] Failed to send push to ID ${id}:`, err?.message || err);
+      } catch (err: unknown) {
+        const error = err as { message?: string; statusCode?: number };
+        console.error(`[Bun Server] Failed to send push to ID ${id}:`, error?.message || err);
         failCount++;
         // Remove stale/expired subscriptions (410 Gone / 404 Not Found)
-        if (err?.statusCode === 410 || err?.statusCode === 404) {
+        if (error?.statusCode === 410 || error?.statusCode === 404) {
           subscriptions.delete(id);
         }
       }
     }
-    console.log(`[Bun Server] Push dispatch complete. Success: ${successCount}, Failed: ${failCount}`);
+    console.log(
+      `[Bun Server] Push dispatch complete. Success: ${successCount}, Failed: ${failCount}`
+    );
     return { successCount, failCount };
   };
 
-  const delayMs = (parseInt(String(delaySeconds), 10) || 0) * 1000;
+  const delayMs = (Number.parseInt(String(delaySeconds), 10) || 0) * 1000;
 
   if (delayMs > 0) {
     res.json({
-      message: `Notification scheduled in ${delaySeconds} seconds for ${subscriptions.size} subscriber(s).`
+      message: `Notification scheduled in ${delaySeconds} seconds for ${subscriptions.size} subscriber(s).`,
     });
     setTimeout(() => {
       sendPushToAll();
@@ -162,15 +167,15 @@ app.post('/api/send-notification', async (req: Request, res: Response) => {
     res.json({
       message: 'Push notification process initiated on Bun!',
       subscribersTargeted: subscriptions.size,
-      results
+      results,
     });
   }
 });
 
 // Start Bun Express Server
 app.listen(PORT, () => {
-  console.log(`=======================================================`);
+  console.log('=======================================================');
   console.log(`🚀 Bun Web Push Express Server running at http://localhost:${PORT}`);
   console.log(`⚡ Runtime: Bun v${Bun.version}`);
-  console.log(`=======================================================`);
+  console.log('=======================================================');
 });

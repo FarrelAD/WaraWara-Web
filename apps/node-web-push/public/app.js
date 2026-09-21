@@ -39,9 +39,7 @@ function log(msg) {
  */
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/');
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
 
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
@@ -66,7 +64,7 @@ function updateUI() {
   /** @type {NotificationPermission} */
   const permission = Notification.permission;
   permBadge.textContent = permission.toUpperCase();
-  permBadge.className = `badge badge-${permission === 'granted' ? 'granted' : (permission === 'denied' ? 'denied' : 'default')}`;
+  permBadge.className = `badge badge-${permission === 'granted' ? 'granted' : permission === 'denied' ? 'denied' : 'default'}`;
 
   if (permission === 'granted') {
     btnPerm.disabled = true;
@@ -100,12 +98,12 @@ async function init() {
     swRegistration = await navigator.serviceWorker.register('/sw.js');
     log('Service Worker registered successfully: /sw.js');
     updateUI();
-    
+
     // Check existing subscription status
     /** @type {PushSubscription|null} */
     const existingSub = await swRegistration.pushManager.getSubscription();
     const subBadge = document.getElementById('subBadge');
-    
+
     if (subBadge) {
       if (existingSub) {
         subBadge.textContent = 'SUBSCRIBED';
@@ -117,7 +115,7 @@ async function init() {
       }
     }
   } catch (err) {
-    log(`Service Worker registration failed: ${/** @type {Error} */(err).message}`);
+    log(`Service Worker registration failed: ${/** @type {Error} */ (err).message}`);
   }
 
   // Fetch Public VAPID Key from Express Server
@@ -125,9 +123,9 @@ async function init() {
     const res = await fetch('/api/vapid-public-key');
     const data = await res.json();
     vapidPublicKey = data.publicKey;
-    log(`Fetched VAPID Public Key from server.`);
+    log('Fetched VAPID Public Key from server.');
   } catch (err) {
-    log(`Failed to fetch VAPID key: ${/** @type {Error} */(err).message}`);
+    log(`Failed to fetch VAPID key: ${/** @type {Error} */ (err).message}`);
   }
 }
 
@@ -138,7 +136,7 @@ document.getElementById('btnPerm')?.addEventListener('click', async () => {
     log(`User permission response: ${permission}`);
     updateUI();
   } catch (err) {
-    log(`Error requesting permission: ${/** @type {Error} */(err).message}`);
+    log(`Error requesting permission: ${/** @type {Error} */ (err).message}`);
   }
 });
 
@@ -161,7 +159,7 @@ document.getElementById('btnSubscribe')?.addEventListener('click', async () => {
     /** @type {PushSubscription} */
     const subscription = await swRegistration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: applicationServerKey
+      applicationServerKey: applicationServerKey,
     });
 
     log('Received PushSubscription object from browser.');
@@ -170,7 +168,7 @@ document.getElementById('btnSubscribe')?.addEventListener('click', async () => {
     const response = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(subscription)
+      body: JSON.stringify(subscription),
     });
 
     const resData = await response.json();
@@ -182,7 +180,7 @@ document.getElementById('btnSubscribe')?.addEventListener('click', async () => {
       subBadge.className = 'badge badge-granted';
     }
   } catch (err) {
-    log(`Web Push subscription failed: ${/** @type {Error} */(err).message}`);
+    log(`Web Push subscription failed: ${/** @type {Error} */ (err).message}`);
   }
 });
 
@@ -196,12 +194,12 @@ document.getElementById('btnLocalNotif')?.addEventListener('click', () => {
   if (swRegistration) {
     swRegistration.showNotification('Instant Local Notification', {
       body: 'This notification was triggered locally via Service Worker.',
-      tag: 'local-test'
+      tag: 'local-test',
     });
     log('Local Notification dispatched via ServiceWorker.');
   } else {
     new Notification('Instant Local Notification', {
-      body: 'This notification was triggered locally via Browser API.'
+      body: 'This notification was triggered locally via Browser API.',
     });
   }
 });
@@ -218,7 +216,7 @@ document.getElementById('pushForm')?.addEventListener('submit', async (e) => {
   const body = bodyInput ? bodyInput.value : '';
   const delaySeconds = delayInput ? delayInput.value : 0;
 
-  log(`Dispatching push payload request to Express backend...`);
+  log('Dispatching push payload request to Express backend...');
 
   try {
     const response = await fetch('/api/send-notification', {
@@ -227,14 +225,14 @@ document.getElementById('pushForm')?.addEventListener('submit', async (e) => {
       body: JSON.stringify({
         title,
         body,
-        delaySeconds
-      })
+        delaySeconds,
+      }),
     });
 
     const data = await response.json();
     log(`Server response: ${data.message}`);
   } catch (err) {
-    log(`Failed to request push from server: ${/** @type {Error} */(err).message}`);
+    log(`Failed to request push from server: ${/** @type {Error} */ (err).message}`);
   }
 });
 

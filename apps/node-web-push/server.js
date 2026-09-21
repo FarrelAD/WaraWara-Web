@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const express = require('express');
 const cors = require('cors');
 const webPush = require('web-push');
@@ -69,14 +69,18 @@ function resolveVapidKeys() {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    console.error('[SECURITY ERROR] VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY must be set in production!');
+    console.error(
+      '[SECURITY ERROR] VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY must be set in production!'
+    );
     console.error('Run "pnpm generate-vapid" or configure your deployment environment variables.');
     process.exit(1);
   }
 
   console.warn('\n⚠️  [SECURITY WARNING] No VAPID keys configured in environment variables.');
   console.warn('⚠️  Generating temporary ephemeral VAPID keys for local development only.');
-  console.warn('⚠️  Run "pnpm generate-vapid" to persist a permanent keypair into your .env file.\n');
+  console.warn(
+    '⚠️  Run "pnpm generate-vapid" to persist a permanent keypair into your .env file.\n'
+  );
   return webPush.generateVAPIDKeys();
 }
 
@@ -84,15 +88,11 @@ function resolveVapidKeys() {
 const vapidKeys = resolveVapidKeys();
 const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:dev@warawara.demo';
 
-webPush.setVapidDetails(
-  vapidSubject,
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
+webPush.setVapidDetails(vapidSubject, vapidKeys.publicKey, vapidKeys.privateKey);
 
-/** 
+/**
  * Map storing active client push subscriptions keyed by unique subscription ID.
- * @type {Map<string, webPush.PushSubscription>} 
+ * @type {Map<string, webPush.PushSubscription>}
  */
 const subscriptions = new Map();
 
@@ -105,20 +105,20 @@ app.get('/api/vapid-public-key', (req, res) => {
 app.post('/api/subscribe', (req, res) => {
   /** @type {webPush.PushSubscription} */
   const subscription = req.body;
-  
+
   if (!subscription || !subscription.endpoint) {
     return res.status(400).json({ error: 'Invalid subscription object' });
   }
 
   const id = Date.now().toString();
   subscriptions.set(id, subscription);
-  
+
   console.log(`[Server] New subscription registered. Total subscriptions: ${subscriptions.size}`);
-  
+
   res.status(201).json({
     message: 'Subscription stored successfully on server',
     id: id,
-    totalSubscriptions: subscriptions.size
+    totalSubscriptions: subscriptions.size,
   });
 });
 
@@ -136,8 +136,8 @@ app.post('/api/send-notification', async (req, res) => {
     tag: tag || 'demo-push',
     actions: actions || [
       { action: 'open', title: 'Open App' },
-      { action: 'close', title: 'Dismiss' }
-    ]
+      { action: 'close', title: 'Dismiss' },
+    ],
   };
 
   const payload = JSON.stringify(payloadData);
@@ -171,11 +171,11 @@ app.post('/api/send-notification', async (req, res) => {
     return { successCount, failCount };
   };
 
-  const delayMs = (parseInt(String(delaySeconds), 10) || 0) * 1000;
+  const delayMs = (Number.parseInt(String(delaySeconds), 10) || 0) * 1000;
 
   if (delayMs > 0) {
     res.json({
-      message: `Notification scheduled in ${delaySeconds} seconds for ${subscriptions.size} subscriber(s).`
+      message: `Notification scheduled in ${delaySeconds} seconds for ${subscriptions.size} subscriber(s).`,
     });
     setTimeout(() => {
       sendPushToAll();
@@ -185,14 +185,14 @@ app.post('/api/send-notification', async (req, res) => {
     res.json({
       message: 'Push notification process initiated!',
       subscribersTargeted: subscriptions.size,
-      results
+      results,
     });
   }
 });
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`=======================================================`);
+  console.log('=======================================================');
   console.log(`Web Push Demo Server running at http://localhost:${PORT}`);
-  console.log(`=======================================================`);
+  console.log('=======================================================');
 });

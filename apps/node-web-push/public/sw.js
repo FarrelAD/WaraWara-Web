@@ -30,7 +30,7 @@ self.addEventListener('push', (event) => {
   /** @type {PushNotificationData} */
   let data = {
     title: 'Default Push Title',
-    body: 'Default Push Body text'
+    body: 'Default Push Body text',
   };
 
   if (event.data) {
@@ -49,17 +49,15 @@ self.addEventListener('push', (event) => {
     vibrate: [200, 100, 200],
     data: {
       url: data.url || '/',
-      timestamp: Date.now()
+      timestamp: Date.now(),
     },
     actions: data.actions || [
       { action: 'open', title: 'Open App' },
-      { action: 'close', title: 'Dismiss' }
-    ]
+      { action: 'close', title: 'Dismiss' },
+    ],
   };
 
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
+  event.waitUntil(self.registration.showNotification(data.title, options));
 });
 
 // Handle user clicking on notification

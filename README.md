@@ -142,6 +142,21 @@ Open your browser at: `http://localhost:3001`
 
 ---
 
-## 💡 Conclusion
+## 🧹 Code Quality & Developer Tooling
+
+This monorepo utilizes **[Biome](https://biomejs.dev/)** for ultra-fast linting and formatting, along with **TypeScript (`tsc`)** for static type checking across both Node.js and Bun packages:
+
+| Command | Purpose |
+| :--- | :--- |
+| `pnpm lint` | Run Biome linter across the entire monorepo |
+| `pnpm lint:fix` | Automatically apply safe and suggested lint fixes |
+| `pnpm format` | Format all JS/TS/JSON/CSS files with Biome |
+| `pnpm format:check` | Verify formatting consistency without modifying files |
+| `pnpm typecheck` | Run parallel TypeScript type checking (`tsc --noEmit`) on all packages |
+| `pnpm check` | Run all checks (linting, formatting, and typecheck) in a single pass |
+
+---
+
+## Conclusion
 
 This setup demonstrates that Web Push Notifications follow identical W3C Push protocol standards regardless of whether your server runs on **Node.js** or **Bun**. By using Express on Bun, you achieve seamless compatibility with standard Node libraries like `web-push` while leveraging Bun's fast startup and native TypeScript execution.
