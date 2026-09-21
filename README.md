@@ -1,6 +1,6 @@
-# Web Push Notification Demo (Monorepo: Node.js & Bun)
+# Web Push Notification Demo (Monorepo: Node.js, Bun & Python FastAPI)
 
-A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and backend implementations for both **Node.js** and **Bun** runtimes with Express.
+A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and backend implementations across **Node.js**, **Bun**, and **Python (FastAPI)**.
 
 This project explores how web applications can deliver real-time push notifications **directly from your own backend server** using the standard W3C Web Push Protocol without relying on third-party push notification SDKs (like Firebase Cloud Messaging SDK or OneSignal) on the client.
 
@@ -9,8 +9,8 @@ This project explores how web applications can deliver real-time push notificati
 ## 📌 Key Objectives & Key Takeaways
 
 - **No Third-Party Client SDKs**: Understand how Web Push operates natively using browser standards (`PushManager`, `ServiceWorker`) and standard VAPID key pairs.
-- **Multi-Runtime Backend Support**: Compare identical Express.js Web Push architectures across **Node.js** and **Bun**.
-- **Monorepo Architecture**: Clean workspace managed with `pnpm workspaces` dividing apps into `node-web-push` and `bun-web-push`.
+- **Multi-Runtime & Polyglot Backend Support**: Compare identical Web Push architectures across **Node.js** (Express), **Bun** (Express), and **Python** (FastAPI + Asyncio).
+- **Monorepo Architecture**: Clean workspace dividing applications into `node-web-push`, `bun-web-push`, and `fastapi-web-push`.
 - **Interactive UI & Dashboard**: Clean 2-column layout to manage browser permissions, generate push subscriptions, and trigger instant or scheduled push notifications.
 
 ---
@@ -30,7 +30,7 @@ Looking to implement Web Push in your own project? Follow the complete, step-by-
 Web Push Notifications rely on three core pillars:
 1. **Client Browser & Service Worker**: Requests user permission and registers a background worker script (`sw.js`).
 2. **Push Service Endpoint**: Browser vendor-provided endpoint (e.g., Mozilla Push Service, Google FCM Push endpoint) created when the user subscribes via `pushManager.subscribe()`.
-3. **Application Backend (Node.js or Bun)**: Encrypts payloads with **VAPID Keys** and sends HTTPS POST requests directly to the subscription endpoint using `web-push`.
+3. **Application Backend (Node.js, Bun, or Python FastAPI)**: Encrypts payloads with **VAPID Keys** and sends HTTPS POST requests directly to the subscription endpoint using standard cryptographic libraries (`web-push` / `pywebpush`).
 
 ### Architecture Flow Diagram
 
@@ -40,7 +40,7 @@ sequenceDiagram
     actor User
     participant Browser as Browser Client
     participant SW as Service Worker (sw.js)
-    participant Server as Node.js / Bun Backend
+    participant Server as Backend (Node.js / Bun / FastAPI)
     participant PushService as Vendor Push Service
 
     Note over Server: 1. Generate VAPID Keys
@@ -89,20 +89,35 @@ WaraWara-Web/
 │   │   ├── tsconfig.json          # JSDoc typecheck configuration
 │   │   └── package.json           # Node package config
 │   │
-│   └── bun-web-push/              # Bun implementation
+│   ├── bun-web-push/              # Bun implementation
+│   │   ├── public/                # Static assets (HTML, CSS, JS, Service Worker)
+│   │   ├── src/
+│   │   │   ├── config.ts          # Env & VAPID configuration
+│   │   │   ├── types.ts           # TypeScript interfaces & DTOs
+│   │   │   ├── services/
+│   │   │   │   ├── subscription.service.ts  # Client push subscription storage
+│   │   │   │   └── push.service.ts          # Web-push client & multicast dispatch
+│   │   │   ├── routes/
+│   │   │   │   └── push.routes.ts           # Typed Express Router endpoints
+│   │   │   └── app.ts             # Express app factory
+│   │   ├── server.ts              # Clean entrypoint listener (port 3001)
+│   │   ├── tsconfig.json          # Bun TypeScript config
+│   │   └── package.json           # Bun package config
+│   │
+│   └── fastapi-web-push/          # Python FastAPI implementation
 │       ├── public/                # Static assets (HTML, CSS, JS, Service Worker)
 │       ├── src/
-│       │   ├── config.ts          # Env & VAPID configuration
-│       │   ├── types.ts           # TypeScript interfaces & DTOs
+│       │   ├── config.py          # Env & VAPID configuration
+│       │   ├── models.py          # Pydantic schemas (PushSubscription, PushPayload)
 │       │   ├── services/
-│       │   │   ├── subscription.service.ts  # Client push subscription storage
-│       │   │   └── push.service.ts          # Web-push client & multicast dispatch
+│       │   │   ├── subscription_service.py  # In-memory subscription store
+│       │   │   └── push_service.py          # pywebpush client & push dispatch
 │       │   ├── routes/
-│       │   │   └── push.routes.ts           # Typed Express Router endpoints
-│       │   └── app.ts             # Express app factory
-│       ├── server.ts              # Clean entrypoint listener (port 3001)
-│       ├── tsconfig.json          # Bun TypeScript config
-│       └── package.json           # Bun package config
+│       │   │   └── push_routes.py           # FastAPI endpoints
+│       │   └── main.py            # FastAPI entrypoint & static mount
+│       ├── tests/
+│       │   └── test_push_routes.py          # Pytest endpoint test suite
+│       └── pyproject.toml         # PEP 621 package config, Ruff & Mypy settings
 └── README.md
 ```
 
@@ -194,6 +209,7 @@ Open your browser at: `http://localhost:8000`
 
 ## 🧹 Code Quality & Developer Tooling
 
+### JavaScript & TypeScript Workspaces (Node.js & Bun)
 This monorepo utilizes **[Biome](https://biomejs.dev/)** for ultra-fast linting and formatting, along with **TypeScript (`tsc`)** for static type checking across both Node.js and Bun packages:
 
 | Command | Purpose |
@@ -208,8 +224,20 @@ This monorepo utilizes **[Biome](https://biomejs.dev/)** for ultra-fast linting 
 | `pnpm test:bun` | Run Bun native test suite (`bun test`) |
 | `pnpm check` | Run all checks (linting, formatting, typecheck, and tests) in a single pass |
 
+### Python Workspace (`apps/fastapi-web-push`)
+The Python implementation leverages **[Ruff](https://astral.sh/ruff)** for blazing-fast linting/formatting and **[Mypy](https://mypy.readthedocs.io/)** for static type checking, configured directly in `pyproject.toml`:
+
+| Command (in `apps/fastapi-web-push`) | Purpose |
+| :--- | :--- |
+| `ruff check src tests` | Verify code quality, PEP conventions, and unused imports |
+| `ruff check --fix src tests` | Auto-apply recommended lint fixes and organize imports |
+| `ruff format --check src tests` | Verify formatting consistency against 100-character line length |
+| `ruff format src tests` | Format all Python source files |
+| `mypy src tests` | Run strict static type checking across routes and schemas |
+| `pytest -v` | Run automated FastAPI endpoint test suite |
+
 ---
 
 ## Conclusion
 
-This setup demonstrates that Web Push Notifications follow identical W3C Push protocol standards regardless of whether your server runs on **Node.js** or **Bun**. By using Express on Bun, you achieve seamless compatibility with standard Node libraries like `web-push` while leveraging Bun's fast startup and native TypeScript execution.
+This setup demonstrates that Web Push Notifications follow identical W3C Push protocol standards regardless of your backend runtime or programming language. Whether running on **Node.js** (Express), **Bun** (Express), or **Python** (FastAPI + Asyncio), the native browser Service Worker interacts with the exact same VAPID key exchange, subscription model, and encrypted push payload contract.
