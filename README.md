@@ -15,6 +15,15 @@ This project explores how web applications can deliver real-time push notificati
 
 ---
 
+## 📚 Dedicated Implementation Guides
+
+Looking to implement Web Push in your own project? Follow the complete, step-by-step integration guides tailored for each runtime:
+
+- 🟢 **[Node.js Integration Guide](apps/node-web-push/README.md)**: Dependencies, VAPID key management, Express setup, service worker lifecycle, and production database persistence.
+- ⚡ **[Bun (TypeScript) Integration Guide](apps/bun-web-push/README.md)**: Native TypeScript setup, zero-dependency `.env` loading, async push dispatch, automated testing with `bun:test`, and deployment recommendations.
+
+---
+
 ## 🛠️ Architecture & How Web Push Works
 
 Web Push Notifications rely on three core pillars:
