@@ -59,16 +59,38 @@ sequenceDiagram
 ```
 WaraWara-Web/
 ├── pnpm-workspace.yaml            # Monorepo workspace configuration
-├── package.json                   # Root orchestrator scripts
+├── package.json                   # Root orchestrator scripts, Biome & TypeScript configs
+├── biome.json                     # Root linter and formatter configuration
+├── scripts/
+│   └── generate-vapid.js          # Cryptographic keypair generator ('pnpm generate-vapid')
 ├── apps/
 │   ├── node-web-push/             # Node.js implementation
 │   │   ├── public/                # Static assets (HTML, CSS, JS, Service Worker)
-│   │   ├── server.js              # Node.js Express server (port 3000)
+│   │   ├── src/
+│   │   │   ├── config.js          # Env & VAPID key resolution (native process.loadEnvFile)
+│   │   │   ├── types.js           # JSDoc type contracts
+│   │   │   ├── services/
+│   │   │   │   ├── subscription.service.js  # Client push subscription storage
+│   │   │   │   └── push.service.js          # Web-push client & multicast dispatch
+│   │   │   ├── routes/
+│   │   │   │   └── push.routes.js           # Express Router endpoints
+│   │   │   └── app.js             # Express app setup & middleware
+│   │   ├── server.js              # Clean entrypoint listener (port 3000)
+│   │   ├── tsconfig.json          # JSDoc typecheck configuration
 │   │   └── package.json           # Node package config
 │   │
 │   └── bun-web-push/              # Bun implementation
 │       ├── public/                # Static assets (HTML, CSS, JS, Service Worker)
-│       ├── server.ts              # Bun Express TypeScript server (port 3001)
+│       ├── src/
+│       │   ├── config.ts          # Env & VAPID configuration
+│       │   ├── types.ts           # TypeScript interfaces & DTOs
+│       │   ├── services/
+│       │   │   ├── subscription.service.ts  # Client push subscription storage
+│       │   │   └── push.service.ts          # Web-push client & multicast dispatch
+│       │   ├── routes/
+│       │   │   └── push.routes.ts           # Typed Express Router endpoints
+│       │   └── app.ts             # Express app factory
+│       ├── server.ts              # Clean entrypoint listener (port 3001)
 │       ├── tsconfig.json          # Bun TypeScript config
 │       └── package.json           # Bun package config
 └── README.md

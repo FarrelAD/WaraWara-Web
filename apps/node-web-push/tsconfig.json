@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "maxNodeModuleJsDepth": 0
   },
-  "include": ["server.js"]
+  "include": ["src/**/*.js", "server.js"]
 }
