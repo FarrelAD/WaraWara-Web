@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Push Notification Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Web Push Notification Demo</h1>
+      <p>Vanilla JavaScript Client & Python FastAPI Web-Push Architecture</p>
+    </header>
+
+    <main class="main-layout">
+      <!-- Left Column: Controls & System Status -->
+      <div class="column">
+        <section class="card">
+          <h2>System Status</h2>
+          <div class="status-grid">
+            <div class="status-item">
+              <span class="status-label">Notification Permission</span>
+              <span id="permBadge" class="badge badge-default">Checking...</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Service Worker</span>
+              <span id="swBadge" class="badge badge-default">Inactive</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Push Subscription</span>
+              <span id="subBadge" class="badge badge-default">Not Subscribed</span>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button id="btnPerm" class="btn btn-primary">Request Permission</button>
+            <button id="btnSubscribe" class="btn">Subscribe to Web Push</button>
+            <button id="btnLocalNotif" class="btn">Test Local Notification</button>
+          </div>
+        </section>
+
+        <!-- Dispatch Web Push Form -->
+        <section class="card">
+          <h2>Dispatch Web Push (FastAPI Server)</h2>
+          <form id="pushForm">
+            <div class="form-group">
+              <label for="titleInput">Notification Title</label>
+              <input type="text" id="titleInput" class="form-input" value="New Alert from WaraWara">
+            </div>
+            <div class="form-group">
+              <label for="bodyInput">Notification Body</label>
+              <input type="text" id="bodyInput" class="form-input" value="Your Web Push notification feature is working seamlessly via Python FastAPI web-push service!">
+            </div>
+            <div class="form-group">
+              <label for="delayInput">Delay (seconds)</label>
+              <input type="number" id="delayInput" class="form-input" value="0" min="0" max="60">
+            </div>
+
+            <button type="submit" id="btnSendPush" class="btn btn-primary" style="margin-top: 0.5rem;">
+              Send Push via Bun Server
+            </button>
+          </form>
+        </section>
+      </div>
+
+      <!-- Right Column: Realtime Console Logs -->
+      <div class="column">
+        <section class="card" style="height: 100%; display: flex; flex-direction: column;">
+          <h2>Console & Event Logs</h2>
+          <div id="logBox" class="log-box" style="flex: 1; height: 100%;">
+            <div class="log-entry"><span class="log-time">[System]</span> Demo initialized.</div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

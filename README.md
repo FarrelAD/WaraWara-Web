@@ -21,6 +21,7 @@ Looking to implement Web Push in your own project? Follow the complete, step-by-
 
 - 🟢 **[Node.js Integration Guide](apps/node-web-push/README.md)**: Dependencies, VAPID key management, Express setup, service worker lifecycle, and production database persistence.
 - ⚡ **[Bun (TypeScript) Integration Guide](apps/bun-web-push/README.md)**: Native TypeScript setup, zero-dependency `.env` loading, async push dispatch, automated testing with `bun:test`, and deployment recommendations.
+- 🐍 **[Python (FastAPI) Integration Guide](apps/fastapi-web-push/README.md)**: Modern asynchronous FastAPI setup, Pydantic type validation, background scheduled tasks, pywebpush integration, and automated testing with `pytest`.
 
 ---
 
@@ -116,12 +117,14 @@ WaraWara-Web/
 | **Node.js** | `v24.15.0` | `.nvmrc`, `.node-version`, `.tool-versions` | `"node": ">=24.0.0 <25.0.0"` |
 | **Bun** | `v1.4.2` | `.bun-version`, `.tool-versions` | `"bun": ">=1.4.0 <2.0.0"` |
 | **pnpm** | `v10.25.0` | `package.json` (`packageManager`), `.tool-versions` | `"pnpm": ">=10.0.0"` |
+| **Python** | `v3.13.5` | `.python-version`, `.tool-versions` | `requires-python = ">=3.10"` |
 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (`v24.15.0` recommended, or `^24.x`)
 - [Bun](https://bun.sh/) (`v1.4.2` recommended, or `^1.4.x`)
 - [pnpm](https://pnpm.io/) (`v10.25.0`)
+- [Python](https://www.python.org/) (`v3.13.5` recommended, or `>=3.10`)
 
 ### Installation & Setup
 
@@ -159,6 +162,22 @@ pnpm start:bun
 Open your browser at: `http://localhost:3001`
 
 *(For Bun development with auto-reload: `pnpm dev:bun`)*
+
+### Option 3: Run Python FastAPI Server (Port 8000)
+```bash
+cd apps/fastapi-web-push
+
+# Setup virtual environment (if not yet created):
+python -m venv .venv
+# Activate venv:
+.venv\Scripts\activate   # On Windows PowerShell: .venv\Scripts\Activate.ps1
+# Install editable package:
+pip install -e ".[dev]"
+
+# Run FastAPI with auto-reload:
+uvicorn src.main:app --reload --port 8000
+```
+Open your browser at: `http://localhost:8000`
 
 ---
 
