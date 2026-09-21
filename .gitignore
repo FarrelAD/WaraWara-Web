@@ -186,3 +186,9 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+
+# PHP Composer and runtime storage
+vendor/
+.phpunit.cache
+.php-cs-fixer.cache
+apps/php-web-push/storage/subscriptions.json

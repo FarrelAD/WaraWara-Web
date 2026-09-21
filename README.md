@@ -1,6 +1,6 @@
 # Web Push Notification Demo
 
-A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and backend implementations across **Node.js**, **Bun**, **Python (FastAPI)**, and **Golang**.
+A lightweight, beginner-friendly demonstration of native **Web Push Notifications** using vanilla JavaScript, HTML, CSS, and backend implementations across **Node.js**, **Bun**, **Python (FastAPI)**, **Golang**, and **PHP**.
 
 This project explores how web applications can deliver real-time push notifications **directly from your own backend server** using the standard W3C Web Push Protocol without relying on third-party push notification SDKs (like Firebase Cloud Messaging SDK or OneSignal) on the client.
 
@@ -9,8 +9,8 @@ This project explores how web applications can deliver real-time push notificati
 ## 📌 Key Objectives & Key Takeaways
 
 - **No Third-Party Client SDKs**: Understand how Web Push operates natively using browser standards (`PushManager`, `ServiceWorker`) and standard VAPID key pairs.
-- **Multi-Runtime & Polyglot Backend Support**: Compare identical Web Push architectures across **Node.js** (Express), **Bun** (Express), **Python** (FastAPI + Asyncio), and **Golang** (`net/http` + goroutines).
-- **Monorepo Architecture**: Clean workspace dividing applications into `node-web-push`, `bun-web-push`, `fastapi-web-push`, and `golang-web-push`.
+- **Multi-Runtime & Polyglot Backend Support**: Compare identical Web Push architectures across **Node.js** (Express), **Bun** (Express), **Python** (FastAPI + Asyncio), **Golang** (`net/http` + goroutines), and **PHP** (`minishlink/web-push`).
+- **Monorepo Architecture**: Clean workspace dividing applications into `node-web-push`, `bun-web-push`, `fastapi-web-push`, `golang-web-push`, and `php-web-push`.
 - **Interactive UI & Dashboard**: Clean 2-column layout to manage browser permissions, generate push subscriptions, and trigger instant or scheduled push notifications.
 
 ---
@@ -23,6 +23,7 @@ Looking to implement Web Push in your own project? Follow the complete, step-by-
 - ⚡ **[Bun (TypeScript) Integration Guide](apps/bun-web-push/README.md)**: Native TypeScript setup, zero-dependency `.env` loading, async push dispatch, automated testing with `bun:test`, and deployment recommendations.
 - 🐍 **[Python (FastAPI) Integration Guide](apps/fastapi-web-push/README.md)**: Modern asynchronous FastAPI setup, Pydantic type validation, background scheduled tasks, pywebpush integration, and automated testing with `pytest`.
 - 🐹 **[Golang Integration Guide](apps/golang-web-push/README.md)**: Idiomatic Go setup using standard `net/http` routing, `webpush-go` encryption, concurrent goroutine dispatching, and thread-safe subscription management.
+- 🐘 **[PHP Integration Guide](apps/php-web-push/README.md)**: Modern PHP 8.3 setup, RFC 8291/8292 encryption via `minishlink/web-push`, built-in front-controller server, automated testing with `phpunit`, and expired subscription cleanup.
 
 ---
 
@@ -154,6 +155,7 @@ WaraWara-Web/
 | **pnpm** | `v10.25.0` | `package.json` (`packageManager`), `.tool-versions` | `"pnpm": ">=10.0.0"` |
 | **Python** | `v3.13.5` | `.python-version`, `.tool-versions` | `requires-python = ">=3.10"` |
 | **Golang** | `v1.26.4` | `.go-version`, `.tool-versions` | `go.mod (>= 1.22)` |
+| **PHP** | `v8.3.12` | `.tool-versions` | `composer.json (>= 8.2)` |
 
 ### Prerequisites
 
@@ -162,6 +164,7 @@ WaraWara-Web/
 - [pnpm](https://pnpm.io/) (`v10.25.0`)
 - [Python](https://www.python.org/) (`v3.13.5` recommended, or `>=3.10`)
 - [Golang](https://go.dev/) (`v1.26.4` recommended, or `>=1.22`)
+- [PHP](https://www.php.net/) (`v8.3.12` recommended, or `>=8.2`) & [Composer](https://getcomposer.org/)
 
 ### Installation & Setup
 
@@ -184,7 +187,7 @@ WaraWara-Web/
 
 ## 🏃 Running the Servers
 
-You can run either backend or both simultaneously on different ports:
+You can run either backend or simultaneously on different ports:
 
 ### Option 1: Run Node.js Server (Port 3000)
 ```bash
@@ -227,6 +230,13 @@ go run main.go
 make run
 ```
 Open your browser at: `http://localhost:8080`
+
+### Option 5: Run PHP Server (Port 8000)
+```bash
+cd apps/php-web-push
+composer start
+```
+Open your browser at: `http://localhost:8000`
 
 ---
 
@@ -280,8 +290,21 @@ The Golang implementation utilizes standard Go toolchain commands and task autom
 | `go fmt ./...` (or `make fmt`) | Automatically format all Go source files according to Go conventions |
 | `make check` | Run formatting, static analysis, and tests in one pass |
 
+### PHP Workspace (`apps/php-web-push`)
+The PHP implementation utilizes **[PHPStan](https://phpstan.org/)** (Level 8 static analysis), **[PHP-CS-Fixer](https://cs.symfony.com/)** (PSR-12 code style), and **[PHPUnit](https://phpunit.de/)**:
+
+| Command (in `apps/php-web-push`) | Purpose |
+| :--- | :--- |
+| `composer test` | Run PHPUnit automated unit and integration test suite |
+| `composer analyse` | Run PHPStan static analysis (Level 8) |
+| `composer format` | Automatically format all PHP files according to PSR-12 |
+| `composer format:check` | Check code formatting compliance without modifying files |
+| `composer lint` | Inspect code style diffs |
+| `composer check` | Run static analysis, tests, and formatting checks in one pass |
+| `composer start` | Launch local front controller development server on port 8000 |
+
 ---
 
 ## Conclusion
 
-This setup demonstrates that Web Push Notifications follow identical W3C Push protocol standards regardless of your backend runtime or programming language. Whether running on **Node.js** (Express), **Bun** (Express), **Python** (FastAPI + Asyncio), or **Golang** (`net/http` + goroutines), the native browser Service Worker interacts with the exact same VAPID key exchange, subscription model, and encrypted push payload contract.
+This setup demonstrates that Web Push Notifications follow identical W3C Push protocol standards regardless of your backend runtime or programming language. Whether running on **Node.js** (Express), **Bun** (Express), **Python** (FastAPI + Asyncio), **Golang** (`net/http` + goroutines), or **PHP** , the native browser Service Worker interacts with the exact same VAPID key exchange, subscription model, and encrypted push payload contract.
